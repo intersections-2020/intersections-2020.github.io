@@ -2,11 +2,11 @@ var Engine = Matter.Engine,
   // Render = Matter.Render,
   World = Matter.World,
   Bodies = Matter.Bodies;
-  Body=Matter.Body;
-  Mouse = Matter.Mouse,
+Body = Matter.Body;
+Mouse = Matter.Mouse,
   MouseConstraint = Matter.MouseConstraint;
 
-var rectangle, ellip,triang,rectangle1,hexagon;
+var rectangle, ellip, triang, rectangle1, hexagon;
 
 var engine;
 var world;
@@ -16,8 +16,11 @@ var ground, wall1, wall2, wall3;
 var union, lido;
 var ctx;
 var logo;
-var scrollPos=0;
+var scrollPos = 0;
 var gScale;
+var grid;
+var bool=2;
+var imgx;
 
 // function mouseWheel(event) {
 //
@@ -35,11 +38,14 @@ var gScale;
 function setup() {
   union = loadFont("fonts/union.woff");
   lido = loadFont("fonts/LidoSTF.otf");
-  logo=loadImage("asset/logo.svg");
+  logo = loadImage("asset/logo.svg");
+  grid=loadImage("asset/cartesian.jpg");
+  frameRate(60);
 
-
+  console.log(frameRate);
   var canvas = createCanvas(windowWidth, windowHeight);
   ctx = canvas.drawingContext;
+
 
   engine = Engine.create();
   world = engine.world;
@@ -47,13 +53,13 @@ function setup() {
   var options = {
     isStatic: true
   };
-  ground = Bodies.rectangle(width / 2, height + 50, width+200, 98, options);
-  wall1 = Bodies.rectangle(width / 2, -50, width+200, 98, options);
+  ground = Bodies.rectangle(width / 2, height + 50, width + 200, 98, options);
+  wall1 = Bodies.rectangle(width / 2, -50, width + 200, 98, options);
   wall2 = Bodies.rectangle(-50, height / 2, 98, height, options);
   wall3 = Bodies.rectangle(width + 50, height / 2, 98, height, options);
 
   World.add(world, ground);
-  World.add(world, wall1);
+  //  World.add(world, wall1);
   World.add(world, wall2);
   World.add(world, wall3);
 
@@ -62,37 +68,39 @@ function setup() {
     restitution: 0.5
   };
 
-  rectangle = Bodies.rectangle(width*0.2, 200, 450, 140, options);
+  rectangle = Bodies.rectangle(width * 0.25, -200, 450, 140, options);
   World.add(world, rectangle);
 
-  ellip=Bodies.circle(width*0.3,200,250,options)
-  Body.scale(ellip,1,0.28);
+  ellip = Bodies.circle(width * 0.3, -200, 250, options)
+  Body.scale(ellip, 1, 0.28);
   World.add(world, ellip);
 
-  triang= Bodies.polygon(width*0.6,200,3,160,options);
-  Body.scale(triang,0.9,1);
-  Body.rotate(triang,90);
-  World.add(world, triang);//h=210
+  triang = Bodies.polygon(width * 0.6, -200, 3, 160, options);
+  Body.scale(triang, 0.9, 1);
+  Body.rotate(triang, 90);
+  World.add(world, triang); //h=210
 
 
 
 
-    options = {
-      friction: 0.7,
-      restitution: 0.5,
-      chamfer: { radius: 65 }
-    };
+  options = {
+    friction: 0.7,
+    restitution: 0.5,
+    chamfer: {
+      radius: 65
+    }
+  };
 
-  rectangle1 = Bodies.rectangle(width*0.8, 200, 650, 140, options);
+  rectangle1 = Bodies.rectangle(width * 0.7, -200, 650, 130, options);
   World.add(world, rectangle1);
   options = {
     friction: 0.7,
     restitution: 0.5
   };
 
-  hexagon = Bodies.polygon(width*0.9,100,6,160,options);
-  Body.scale(hexagon,0.8,1);
-  Body.rotate(hexagon,90);
+  hexagon = Bodies.polygon(width * 0.75, -300, 6, 160, options);
+  Body.scale(hexagon, 0.8, 1);
+  Body.rotate(hexagon, 90);
   World.add(world, hexagon);
 
 
@@ -100,35 +108,64 @@ function setup() {
 
 
   var canvasmouse = Mouse.create(canvas.elt);
+  canvasmouse.element.removeEventListener("mousewheel", canvasmouse.mousewheel);
+  canvasmouse.element.removeEventListener("DOMMouseScroll", canvasmouse.mousewheel);
   canvasmouse.pixelRatio = pixelDensity();
   options = {
     mouse: canvasmouse
   };
   mConstraint = MouseConstraint.create(engine, options);
   World.add(world, mConstraint);
-  world.gravity.y=0.8;
+  world.gravity.y = 0.8;
 
+
+  imgx=width/2;
 }
 
 
 
 
 
+
 function draw() {
+
+  if (frameCount == 100) {
+    World.add(world, wall1);
+  }
   background(0);
   Engine.update(engine);
 
-  drawRect();
-  drawEllipse();
-  drawTriangle();
-  drawRect1();
-  drawHex();
+
+
+  if ((bool==1)&(imgx>=width*0.35)){
+    imgx-=(width/2-width*0.35)/14;
+  };
+  if ((bool==0)&(imgx<=width/2)){
+    imgx+=(width/2-width*0.35)/13;
+  };
+  imageMode(CENTER);
+  push();
+
+  translate(imgx,height/2+100);
+  //rotate(-PI/20);
+
+  image(grid,0,0,420,420);
+
+  pop();
+
+
+    drawRect();
+    drawEllipse();
+    drawTriangle();
+    drawRect1();
+    drawHex();
 
 
   if (mConstraint.body) {
     var pos = mConstraint.body.position;
     var offset = mConstraint.constraint.pointB;
     var m = mConstraint.mouse.position;
+      World.add(world, wall1);
 
   }
   // rect(ground.position.x, ground.position.y, width, 100);
@@ -146,11 +183,11 @@ function trackTime(type, x, y, tracking) {
   for (var i = 0; i < type.length; i++) {
     text(type[i], x, y);
     x = x + textWidth(type[i]) + tracking;
-    if (type[i]=="P"){
-      x-=5;
+    if (type[i] == "P") {
+      x -= 5;
     }
   }
-}//kerning pair for P.M.
+} //kerning pair for P.M.
 
 
 
@@ -184,9 +221,9 @@ function drawEllipse() {
   translate(pos.x, pos.y);
   rotate(angle);
   rectMode(CENTER);
-  textAlign(LEFT,CENTER);
+  textAlign(LEFT, CENTER);
   noStroke();
-  fill(0,120,191);
+  fill(0, 120, 191);
   ellipse(0, 0, 500, 140);
   fill(0);
   textSize(40);
@@ -200,20 +237,20 @@ function drawTriangle() {
   var angle = triang.angle;
   push();
   translate(pos.x, pos.y);
-  rotate(angle+PI*3);
-  scale(0.9,1);
+  rotate(angle + PI * 3);
+  scale(0.9, 1);
   rectMode(CENTER);
-  textAlign(LEFT,CENTER);
+  textAlign(LEFT, CENTER);
   noStroke();
-  fill(0,169,92);
-  polygon(0,0,160,3);
+  fill(0, 169, 92);
+  polygon(0, 0, 160, 3);
 
   pop();
   push();
   fill(0);
   textSize(38);
   translate(pos.x, pos.y);
-  rotate(angle+PI*3+PI/2);
+  rotate(angle + PI * 3 + PI / 2);
   textFont(lido);
   trackTime("6 P.M. –", -55, -10, -2);
   trackTime("7:30 P.M.", -60, 30, -2);
@@ -232,8 +269,8 @@ function drawRect1() {
   rectMode(CENTER);
   //textAlign(CENTER);
   noStroke();
-  fill(255,232,0);
-  rect(0, 0, 650, 140,65);
+  fill(255, 232, 0);
+  rect(0, 0, 650, 130, 65);
   fill(0);
   textSize(40);
   textFont(union);
@@ -254,19 +291,19 @@ function drawHex() {
   push();
   translate(pos.x, pos.y);
 
-  rotate(angle+PI/2);
-  scale(1,0.8);
+  rotate(angle + PI / 2);
+  scale(1, 0.8);
   rectMode(CENTER);
   //textAlign(CENTER);
   noStroke();
-  fill(0,120,191);
-  polygon(0, 0, 160,6);
+  fill(0, 120, 191);
+  polygon(0, 0, 160, 6);
   pop();
   push();
 
   fill(0);
   translate(pos.x, pos.y);
-  rotate(angle+PI/2*3);
+  rotate(angle + PI / 2 * 3);
   textSize(40);
   textFont(union);
 
@@ -294,3 +331,140 @@ function windowResized() {
 
   setup();
 }
+
+function mouseReleased() {
+
+
+  if (!(mConstraint.body)) {
+    if (!$("#names").hasClass("active")) {
+      $('#names').toggleClass('active');
+      $('#logo').toggleClass('active');
+      sizeDown();
+    }
+    else if (mouseX<width*0.7) {
+      $('#names').toggleClass('active');
+        $('#logo').toggleClass('active');
+      sizeUp();
+    }
+  }
+}
+
+// function touchStarted() {
+//
+//
+//   if (!(mConstraint.body)) {
+//     if (!$("#names").hasClass("active")) {
+//       $('#names').toggleClass('active');
+//       $('#logo').toggleClass('active');
+//       sizeDown();
+//     }
+//     else if (mouseX<width*0.7) {
+//       $('#names').toggleClass('active');
+//         $('#logo').toggleClass('active');
+//       sizeUp();
+//     }
+//   }
+// }
+
+
+
+
+function sizeDown(){
+ bool=1;
+
+  width=width*0.7;
+  var canvas = createCanvas(windowWidth, windowHeight);
+  ctx = canvas.drawingContext;
+
+
+  engine = Engine.create();
+  world = engine.world;
+  Engine.run(engine);
+  var options = {
+    isStatic: true
+  };
+  ground = Bodies.rectangle(width / 2, height + 50, width + 200, 98, options);
+  wall1 = Bodies.rectangle(width / 2, -50, width + 200, 98, options);
+  wall2 = Bodies.rectangle(-50, height / 2, 98, height, options);
+  wall3 = Bodies.rectangle(width*0.7 + 50, height / 2, 98, height, options);
+
+  World.add(world, ground);
+
+  World.add(world, wall2);
+  World.add(world, wall3);
+
+  options = {
+    friction: 0.7,
+    restitution: 0.5
+  };
+
+  rectangle = Bodies.rectangle(width * 0.25, -200, 450, 140, options);
+  World.add(world, rectangle);
+
+  ellip = Bodies.circle(width * 0.25, -200, 250, options)
+  Body.scale(ellip, 1, 0.28);
+  World.add(world, ellip);
+
+  triang = Bodies.polygon(width * 0.3, -200, 3, 160, options);
+  Body.scale(triang, 0.9, 1);
+  Body.rotate(triang, 90);
+  World.add(world, triang); //h=210
+
+
+
+
+  options = {
+    friction: 0.7,
+    restitution: 0.5,
+    chamfer: {
+      radius: 65
+    }
+  };
+
+  rectangle1 = Bodies.rectangle(width * 0.4, -200, 650, 130, options);
+  World.add(world, rectangle1);
+  options = {
+    friction: 0.7,
+    restitution: 0.5
+  };
+
+  hexagon = Bodies.polygon(width * 0.45, -300, 6, 160, options);
+  Body.scale(hexagon, 0.8, 1);
+  Body.rotate(hexagon, 90);
+  World.add(world, hexagon);
+
+
+  var canvasmouse = Mouse.create(canvas.elt);
+  canvasmouse.element.removeEventListener("mousewheel", canvasmouse.mousewheel);
+  canvasmouse.element.removeEventListener("DOMMouseScroll", canvasmouse.mousewheel);
+  canvasmouse.pixelRatio = pixelDensity();
+  options = {
+    mouse: canvasmouse
+  };
+  mConstraint = MouseConstraint.create(engine, options);
+  World.add(world, mConstraint);
+  world.gravity.y = 0.8;
+
+
+
+}
+
+
+
+function sizeUp(){
+  bool=0;
+  World.remove(world, wall3);
+  options = {
+    isStatic: true
+  };
+  wall3 = Bodies.rectangle(width + 50, height / 2, 98, height, options);
+  World.add(world, wall3);
+
+
+
+}
+// $( "#cross" ).click(function() {
+//   $('#names').toggleClass('active');
+//     $('#logo').toggleClass('active');
+//   sizeUp();
+// });
