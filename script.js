@@ -129,7 +129,7 @@ function setup() {
 
 function draw() {
 
-  if (frameCount == 100) {
+  if (frameCount == 40) {
     World.add(world, wall1);
   }
   background(0);
@@ -370,7 +370,7 @@ function mouseReleased() {
 
 
 function sizeDown(){
-  
+
   bool=1;
 
   width=width*0.7;
