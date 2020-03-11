@@ -468,3 +468,15 @@ function sizeUp(){
 //     $('#logo').toggleClass('active');
 //   sizeUp();
 // });
+function keyPressed() {
+  if (keyCode === 32) {
+    jump();
+}}
+
+function jump() {
+  Body.applyForce( rectangle, {x: rectangle.position.x, y: rectangle.position.y}, {x: 0, y: -4});
+  Body.applyForce( ellip, {x: ellip.position.x, y: ellip.position.y}, {x: 0, y: -4});
+  Body.applyForce( triang, {x: triang.position.x, y: triang.position.y}, {x: 0, y: -1});
+  Body.applyForce( rectangle1, {x: rectangle1.position.x, y: rectangle1.position.y}, {x: 0, y: -6});
+  Body.applyForce( hexagon, {x: hexagon.position.x, y: hexagon.position.y}, {x: 0, y: -2});
+}
