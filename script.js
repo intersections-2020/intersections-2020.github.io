@@ -370,7 +370,8 @@ function mouseReleased() {
 
 
 function sizeDown(){
- bool=1;
+  
+  bool=1;
 
   width=width*0.7;
   var canvas = createCanvas(windowWidth, windowHeight);
@@ -474,9 +475,15 @@ function keyPressed() {
 }}
 
 function jump() {
+  options = {
+    isStatic: true
+  };
+  wall1 = Bodies.rectangle(width / 2, -50, width + 200, 98, options);
+  World.add(world, wall1);
+
   Body.applyForce( rectangle, {x: rectangle.position.x, y: rectangle.position.y}, {x: 0, y: -4});
   Body.applyForce( ellip, {x: ellip.position.x, y: ellip.position.y}, {x: 0, y: -4});
   Body.applyForce( triang, {x: triang.position.x, y: triang.position.y}, {x: 0, y: -1});
   Body.applyForce( rectangle1, {x: rectangle1.position.x, y: rectangle1.position.y}, {x: 0, y: -6});
-  Body.applyForce( hexagon, {x: hexagon.position.x, y: hexagon.position.y}, {x: 0, y: -2});
+  Body.applyForce( hexagon, {x: hexagon.position.x, y: hexagon.position.y}, {x: 0, y: -1});
 }
