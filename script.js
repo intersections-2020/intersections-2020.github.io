@@ -166,6 +166,7 @@ function draw() {
     var offset = mConstraint.constraint.pointB;
     var m = mConstraint.mouse.position;
       World.add(world, wall1);
+    $('canvas').css('cursor', 'default'); 
 
   }
   // rect(ground.position.x, ground.position.y, width, 100);
