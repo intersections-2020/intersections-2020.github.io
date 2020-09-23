@@ -342,11 +342,13 @@ function mouseReleased() {
     if (!$("#names").hasClass("active")) {
       $('#names').toggleClass('active');
       $('#logo').toggleClass('active');
+      $('canvas').toggleClass('active');
       sizeDown();
     }
     else if (mouseX<width*0.7) {
       $('#names').toggleClass('active');
         $('#logo').toggleClass('active');
+      $('canvas').toggleClass('active');
       sizeUp();
     }
   }
